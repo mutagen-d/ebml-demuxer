@@ -16,7 +16,7 @@ yarn add ebml-demuxer
 
 or cdn
 ```html
-<script src="https://cdn.jsdelivr.net/npm/ebml-demuxer@1.0.0/dist/ebml-demuxer.iife.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ebml-demuxer@1.1.0/dist/ebml-demuxer.iife.full.min.js"></script>
 <script>
   const { EbmlDemuxer } = window.EBMLDemux
 </script>
