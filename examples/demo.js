@@ -14,6 +14,9 @@ demuxer.on('end', async () => {
     fs.writeFile(path.join(__dirname, 'output.webm'), Buffer.concat(videoChunks)),
   ])
 })
+demuxer.on('keyframe', (timecode, track) => {
+  console.log('keyframe', track, timecode)
+})
 
 const main = async () => {
   const buffer = await fs.readFile(path.join(__dirname, 'input.webm'))

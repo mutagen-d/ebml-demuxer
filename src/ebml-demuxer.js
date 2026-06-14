@@ -48,7 +48,10 @@ class EbmlDemuxer extends EventEmitter {
     this.options.tracks ||= ['video', 'audio']
 
     this.decoder.on('data', this.onDecodedData)
-    this.on('track-data', this.onDecodedTrack)
+
+    this.emitterDecoded = new EventEmitter()
+    this.emitterDecoded.on('track-data', this.onDecodedTrack)
+    // this.on('track-data', this.onDecodedTrack)
     this.decoder.on('end', this.onEnd)
     /** 
      * @private
@@ -71,9 +74,13 @@ class EbmlDemuxer extends EventEmitter {
     /** 
      * @private
      * @type {number} */
-    this.clusterTimecode = undefined
+    this.firstTimecode = undefined
     /** @private */
     this.clusterStarted = false
+    /** 
+     * @private
+     * @type {number} */
+    this.currentTimecode = undefined
   }
 
   clearListeners() {
@@ -119,12 +126,15 @@ class EbmlDemuxer extends EventEmitter {
       return
     }
     if (this.decoder.isLive && chunk[1].name === 'Timecode') {
-      this.clusterTimecode = typeof this.clusterTimecode === 'number' ? this.clusterTimecode : chunk[1].value
+      this.firstTimecode = typeof this.firstTimecode === 'number' ? this.firstTimecode : chunk[1].value
       const buff = Buffer.alloc(chunk[1].dataSize)
-      const value = chunk[1].value - this.clusterTimecode
+      const value = chunk[1].value - this.firstTimecode
       buff.writeUintBE(value, 0, buff.byteLength)
       chunk[1].data = buff
       chunk[1].value = value
+    }
+    if (chunk[1].name === 'Timecode') {
+      this.currentTimecode = chunk[1].value
     }
     this.demuxCluster(chunk)
   }
@@ -173,12 +183,16 @@ class EbmlDemuxer extends EventEmitter {
   demuxCluster(chunk) {
     if (chunk[1].name === 'SimpleBlock') {
       if (this.trackNumbers.includes(chunk[1].track)) {
-        this.emit('track-data', chunk, chunk[1].track)
+        if (chunk[1].keyframe) {
+          const timecode = (this.currentTimecode || 0) + chunk[1].value
+          this.emit('keyframe', timecode, getTrackType(chunk[1].track))
+        }
+        this.emitterDecoded.emit('track-data', chunk, chunk[1].track)
       }
       return
     }
     for (const track of this.trackNumbers) {
-       this.emit('track-data', chunk, track)
+      this.emitterDecoded.emit('track-data', chunk, track)
     }
   }
 

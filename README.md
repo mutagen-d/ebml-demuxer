@@ -32,6 +32,9 @@ const demuxer = new EbmlDemuxer({ tracks: ['video'] }) // or ['video', 'audio'],
 demuxer.on('video', (data, codec) => {
   // Handle video frame data
 })
+demuxer.on('keyframe', (timecode, track) => {
+  // handle keyframes for each track
+})
 
 demuxer.on('end', () => {
   console.log('Demuxing complete')
