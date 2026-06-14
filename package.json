@@ -1,0 +1,36 @@
+{
+  "name": "ebml-demuxer",
+  "version": "1.0.0",
+  "description": "A lightweight EBML demuxer for extracting specific tracks from WebM/Matroska files.",
+  "main": "src/index.js",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ebml",
+    "webm",
+    "mkv",
+    "matroska",
+    "demuxer"
+  ],
+  "author": "mutagen-d",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mutagen-d/ebml-demuxer.git"
+  },
+  "dependencies": {
+    "ebml.js": "^4.1.2"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "stream-browserify": "^3.0.0",
+    "terser-webpack-plugin": "^5.6.1",
+    "ts-ebml": "^3.0.2",
+    "webpack": "^5.107.2",
+    "webpack-cli": "^7.0.3",
+    "webpack-merge": "^6.0.1"
+  }
+}
